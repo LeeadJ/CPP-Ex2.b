@@ -13,14 +13,32 @@ void  ariel::Notebook::write(int page, int row, int column, Direction dir, std::
     if(column > MAX_COL){
             throw std::runtime_error("Column input Exceeds the size Restriction!");
     }
-    if((text.length() > MAX_COL && dir == Direction::Horizontal)){
-        throw std::runtime_error("Text input Exceeds the Column size Restriction!");
+    if(text.length() > MAX_COL && dir == Direction::Horizontal){
+        throw std::runtime_error("Text size Exceeds the Column size Restriction!");
+    }
+    if(column + text.length() > MAX_COL && dir == Direction::Horizontal){
+        throw std::runtime_error("Text size of (input + starting column) Exceeds the Column size Restriction!");
     }
     if(page<0 || row<0 || column<0){
         throw std::runtime_error("Negative input Error!");
     }
     if(space_Occupied(page, row, column, dir, text)){
-        throw std::runtime_error("Current space occupied. Can not write wanted text!");
+        throw std::runtime_error("Current space occupied. Can not over-write wanted text!");
+    }
+
+    //If the function reached this line, the space is NOT occupied.
+    //Checking direction:
+    int text_index=0;
+    if(dir == Direction::Horizontal){
+        for(int i=column; i<column+text.length(); i++, text_index++){ 
+             this->notebook[page][row][i] = text[text_index];
+            }
+        }
+    //Direction is Vertical:
+    else{
+        for(int i=row; i<row+text.length(); i++, text_index++){
+            this->notebook[page][i][column] = text[text_index];
+        }
     }
 
     
@@ -58,39 +76,28 @@ void ariel::Notebook::show(int page){
 /*Function to check if the wanted spot to write is occupied.
   Returns true if the space is occupied and false if not.*/
 bool ariel::Notebook::space_Occupied(int page, int row, int column, Direction dir, std::string const &text){
-    //Checking the actual length of the 'text' in case it starts or ends with '_'
-    // len = the actual amount of consecutive indexs of '_' needed for the text.
-    int i=0;
-    int len = text.length();
-    while(text[i]=='_'){
-        len--;
-        i++;
-    }
-    int j = text.length();
-    while(text[j-1]=='_'){
-        len--;
-        j--;
-    }
     bool ans = false;
     //Here I check if the page and row exist by checking if their key count is not 0:    
     if(this->notebook.count(page) != 0){
         if(this->notebook[page].count(row) != 0){
             //Check the direction of the text:
+            int text_index=0;
             if(dir == Direction::Horizontal){
-                std::string temp = this->notebook[page][row].substr(column, text.length());
-                std::string str(len, '_');
-                if(temp.find(str) == std::string::npos)
-                    ans = true;
+                for(int i=column; i<column+text.length(); i++, text_index++){ 
+                    if(this->notebook[page][row][i] != '_' && text[text_index] != '_')
+                        ans = true;
+                }
+                // std::string temp = this->notebook[page][row].substr(column, text.length());
+                // std::string str(len, '_');
+                // if(temp.find(str) == std::string::npos)
+                //     ans = true;
+
             }
             //The direction is Vertical:
             else{
-                int text_index = -1;
-                for(int i=row; i<row + text.length(); i++){
-                    text_index++;
+                for(int i=row; i<row + text.length(); i++, text_index++){
                     //Here I check if the row was previously initialzied. If not - no need to check if index is occupied.
-                    if(this->notebook[page].count(row) == 0)
-                        continue;
-                    else{
+                    if(this->notebook[page].count(row) != 0){
                         int index = column;
                         std::string temp_row = (std::string)this->notebook[page][i];
                         if(temp_row.at(index) != '_' && text[text_index] != '_')
@@ -132,48 +139,24 @@ int main(){
     }
         
     
-    n.notebook[0][0].replace(0, 1, "L");
-    n.notebook[0][1].replace(0, 1, "e");
-    n.notebook[0][2].replace(0, 1, "_");
-    n.notebook[0][3].replace(0, 1, "_");
-    n.notebook[0][4].replace(0, 1, "d");
-    std::string temp = "__ead";
-    bool x = n.space_Occupied(0,0,0,Direction::Vertical, temp);
     
+    n.notebook[0][0].replace(1, 5, "L__ad");
+    n.notebook[0][3].replace(0, 1, "a");
+    n.notebook[0][4].replace(0, 1, "d");
+    std::string temp = "ee";
+    // bool x = n.space_Occupied(0,0,1,Direction::Horizontal, temp);
+    // std::cout << x<< std::endl;    
+    n.write(0,0,99,Direction::Horizontal, temp);
+    n.write(0,1,0,Direction::Vertical, temp);
     std::cout << temp<< std::endl;    
     
-    
-    
-    
+
     for(auto itr = n.notebook.begin(); itr != n.notebook.end(); itr++){
         std::cout << "\tPage number: "<< itr->first <<std::endl;
         for(auto itr_r = n.notebook[itr->first].begin(); itr_r != n.notebook[itr->first].end(); itr_r++){
             std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
         }
-    } 
-    // std::cout << temp << std::endl;    
+    }    
+    std::cout << n.notebook[0][0][0]<< std::endl; 
     return 0;
 }
-//using namespace std locally to better understand the code.
-// using namespace std;
-    // //Checking if the wanted page already exists in the outer map:
-    // //If the amount of times the page in the map is 0, then the page doesn't exist.
-    // if(this->notebook.count(page) == 0){
-    //     //Creating the page in the map:
-
-    // }
-    // else{
-
-    // }
-    // //Creating an iterator for the outer map(outer map = pages):
-    // map<int,map<int,string>>::iterator itr_page = this->notebook.begin();
-
-    // //Looping through the map. Stops if reaching the end of the map or if the wanted page key is found:
-    // while(itr_page != this->notebook.end() && itr_page->first != page){
-    //     itr_page++;
-    // }
-
-    // //If the wanted page hasn't been found, it hasn't been called previously. Create a new page key in the map:
-    // if(itr_page == this->notebook.end()){
-
-    // }
