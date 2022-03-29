@@ -18,8 +18,8 @@ namespace ariel{
     void erase(int page, int row, int column, Direction dir, int len);
     std::string read(int page, int row, int column, Direction dir, int len);
     void show(int page);
-    void create_page(int page);
-    void create_row(int page, int row_num);
+    void create_newPage(int page);
+    void create_newRow(int page, int row_num);
     };
     
 }

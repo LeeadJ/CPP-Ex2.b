@@ -53,28 +53,38 @@ void ariel::Notebook::show(int page){
 //Helper Functions:
 
 /*Function to create a new page.*/
-void ariel::Notebook::create_page(int page){
+void ariel::Notebook::create_newPage(int page){
     this->notebook[page] = std::map<int,std::string>();
 }
 
 // /*Function to create a new row.*/
-// void ariel::Notebook::create_row(int page, int row_num){
-//     std::string row(100, '_');
-//     // this->notebook[page].insert()
-//     row.replace(10, 6, "Leead");
-//     std::cout<<row<<std::endl;
-//     std::cout << row.length()<<std::endl;
-//     std::cout<<typeid(row).name()<<std::endl;
-// }
+void ariel::Notebook::create_newRow(int page, int row_num){
+    std::string row(100, '_');
+    this->notebook[page][row_num] = row;
+    // row.replace(10, 6, "Leead");
+    // std::cout<<row<<std::endl;
+    // std::cout << row.length()<<std::endl;
+    // std::cout<<typeid(row).name()<<std::endl;
+}
 // int main(){
 //     using namespace ariel;
 //     Notebook n;
-//     n.create_page(10);
-//     n.create_page(3);
-//     n.create_page(160);
-//     n.create_page(30);
+//     n.create_newPage(10);
+//     n.create_newRow(10, 40);
+//     n.create_newPage(3);
+//     n.create_newRow(3, 405);
+//     n.create_newPage(160);
+//     n.create_newRow(160, 0);
+//     n.create_newPage(0);
+//     n.create_newRow(0, 40);
+//     n.create_newRow(0, 41);
+//     n.notebook[0][40].replace(10, 16, "Leead Jacobowitz");
+
 //     for(auto itr = n.notebook.begin(); itr != n.notebook.end(); itr++){
-//         std::cout << itr->first <<std::endl;
+//         std::cout << "Page number: "<< itr->first <<std::endl;
+//         for(auto itr_r = n.notebook[itr->first].begin(); itr_r != n.notebook[itr->first].end(); itr_r++){
+//             std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
+//         }
 //     } 
 
 //     return 0;
