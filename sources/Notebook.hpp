@@ -1,3 +1,4 @@
+#pragma once //This line makes sure the 'Notebook.hpp' file will only be compiled once in cse of multipaul use.
 #include<iostream>
 #include "Direction.hpp"
 #include<string>
@@ -17,6 +18,8 @@ namespace ariel{
     void erase(int page, int row, int column, Direction dir, int len);
     std::string read(int page, int row, int column, Direction dir, int len);
     void show(int page);
+    void create_page(int page);
+    void create_row(int page, int row_num);
     };
     
 }
