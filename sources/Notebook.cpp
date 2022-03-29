@@ -30,20 +30,32 @@ void  ariel::Notebook::write(int page, int row, int column, Direction dir, std::
     //Checking direction:
     int text_index=0;
     if(dir == Direction::Horizontal){
+        //If the page doesn't exist:
+        if(this->notebook.count(page) == 0)
+            this->create_newPage(page);
+        //If the row doesn't exist:
+        if(this->notebook[page].count(row) == 0)
+            this->create_newRow(page, row);
+
         for(int i=column; i<column+text.length(); i++, text_index++){ 
              this->notebook[page][row][i] = text[text_index];
             }
         }
     //Direction is Vertical:
     else{
+        //If the page doesn't exist:
+        if(this->notebook.count(page) == 0)
+            this->create_newPage(page);
+
         for(int i=row; i<row+text.length(); i++, text_index++){
+            //If the row doesn't exist:
+            if(this->notebook[page].count(i) == 0)
+                this->create_newRow(page, i);
             this->notebook[page][i][column] = text[text_index];
         }
     }
-
-    
-
 }
+
 void ariel::Notebook::erase( int page, int row, int column, Direction dir, int len){
     if(column > MAX_COL){
         throw std::runtime_error("Column input Exceeds the size Restriction!");
@@ -55,18 +67,27 @@ void ariel::Notebook::erase( int page, int row, int column, Direction dir, int l
         throw std::runtime_error("Negative input Error!");
     }
 }
+
 std::string ariel::Notebook::read( int page, int row, int column, Direction dir, int len){
+    if(len < 0){
+        throw std::runtime_error("Invaled Negatic len input!");
+    }
     if(column > MAX_COL){
         throw std::runtime_error("Column input Exceeds the size Restriction!");
     }
     if((len > MAX_COL && dir == Direction::Horizontal) || (len + column > MAX_COL && dir == Direction::Horizontal)){
         throw std::runtime_error("Reading length Exceeds the Column size Restriction!");
     }
+    if(column + len > MAX_COL && dir == Direction::Horizontal){
+        throw std::runtime_error("Reading length Exceeds the Column size Restriction!");
+    }
     if(page<0 || row<0 || column<0 || len<0){
         throw std::runtime_error("Negative input Error!");
     }
+
     return "Function read";
 }
+
 void ariel::Notebook::show(int page){
 
     }
@@ -132,22 +153,20 @@ void ariel::Notebook::create_newRow(int page, int row_num){
 int main(){
     using namespace ariel;
     Notebook n;
-    for(int i=0; i<2; i++){
-        n.create_newPage(i);
-        for(int j=0; j<6; j++)
-            n.create_newRow(i,j);
-    }
-        
-    
-    
-    n.notebook[0][0].replace(1, 5, "L__ad");
-    n.notebook[0][3].replace(0, 1, "a");
-    n.notebook[0][4].replace(0, 1, "d");
-    std::string temp = "ee";
+    // for(int i=0; i<2; i++){
+    //     n.create_newPage(i);
+    //     for(int j=0; j<6; j++)
+    //         n.create_newRow(i,j);
+    // }
+    // n.notebook[0][0].replace(1, 5, "L__ad");
+    // n.notebook[0][3].replace(0, 1, "a");
+    // n.notebook[0][4].replace(0, 1, "d");
+    std::string temp = "Leead";
     // bool x = n.space_Occupied(0,0,1,Direction::Horizontal, temp);
     // std::cout << x<< std::endl;    
-    n.write(0,0,99,Direction::Horizontal, temp);
-    n.write(0,1,0,Direction::Vertical, temp);
+    // n.write(0,0,0,Direction::Horizontal, temp);
+    n.write(0,87,0,Direction::Vertical, temp);
+    n.write(0,0,87,Direction::Vertical, temp);
     std::cout << temp<< std::endl;    
     
 
