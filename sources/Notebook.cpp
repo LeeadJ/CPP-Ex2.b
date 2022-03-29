@@ -84,8 +84,29 @@ std::string ariel::Notebook::read( int page, int row, int column, Direction dir,
     if(page<0 || row<0 || column<0 || len<0){
         throw std::runtime_error("Negative input Error!");
     }
+    std::string ans = "";
+    //Initializing Page and Row in case it doesn't exist:
+    if(this->notebook.count(page) == 0)
+        this->create_newPage(page);
+    if(this->notebook[page].count(row) == 0)
+        this->create_newRow(page, row);
 
-    return "Function read";
+    if(dir==Direction::Horizontal){
+        for(int i=column; i<column+len; i++){
+            ans += this->notebook[page][row][i];
+        }
+    }
+    //The direction is Vertical:
+    else{
+        for(int i=row; i<row+len; i++){
+            //Initializing row in case it doesn't exist:
+            if(this->notebook[page].count(i) == 0)
+                this->create_newRow(page, i);
+            ans += this->notebook[page][i][column];
+        }
+    }
+
+    return ans;
 }
 
 void ariel::Notebook::show(int page){
@@ -169,6 +190,7 @@ int main(){
     n.write(0,0,87,Direction::Vertical, temp);
     std::cout << temp<< std::endl;    
     
+    std::cout << n.read(0,85,0,Direction::Vertical,10) << std::endl; 
 
     for(auto itr = n.notebook.begin(); itr != n.notebook.end(); itr++){
         std::cout << "\tPage number: "<< itr->first <<std::endl;
@@ -176,6 +198,8 @@ int main(){
             std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
         }
     }    
-    std::cout << n.notebook[0][0][0]<< std::endl; 
+
+    
+    
     return 0;
 }
