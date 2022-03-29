@@ -60,15 +60,35 @@ void ariel::Notebook::erase( int page, int row, int column, Direction dir, int l
     if((len > MAX_COL && dir == Direction::Horizontal) || (len + column > MAX_COL && dir == Direction::Horizontal)){
         throw std::runtime_error("Erasing length Exceeds the Column size Restriction!");
     }
+    if(column + len > MAX_COL && dir == Direction::Horizontal){
+        throw std::runtime_error("Erasing length Exceeds the Column size Restriction!");
+    }
     if(page<0 || row<0 || column<0 || len<0){
         throw std::runtime_error("Negative input Error!");
+    }   
+
+    //Initializing Page and Row in case it doesn't exist:
+    if(this->notebook.count(page) == 0)
+        this->create_newPage(0);
+    if(this->notebook[page].count(row) == 0)
+        this->create_newRow(page, row);
+
+    if(dir == Direction::Horizontal){
+        for(int i=column; i< column+len; i++){
+            this->notebook[page][row][i] = '~';
+        }
+    }
+    //The Direction is Vertical:
+    else{
+        for(int i=row; i<row+len; i++){
+            if(this->notebook[page].count(i) == 0)
+                this->create_newRow(page, i);
+            this->notebook[page][i][column] = '~';
+        }
     }
 }
 
 std::string ariel::Notebook::read( int page, int row, int column, Direction dir, int len){
-    if(len < 0){
-        throw std::runtime_error("Invaled Negatic len input!");
-    }
     if(column > MAX_COL){
         throw std::runtime_error("Column input Exceeds the size Restriction!");
     }
@@ -107,8 +127,25 @@ std::string ariel::Notebook::read( int page, int row, int column, Direction dir,
 }
 
 void ariel::Notebook::show(int page){
-
+    if(page<0)
+        throw std::runtime_error("Negative Input Error!");
+    //If the page doesn't exist:
+    if(this->notebook.count(page) == 0){
+        this->create_newPage(page);
+        std::cout << "\tPage number: "<< page << "  (This Page is Empty)" << std::endl;
+        for(int i=0; i<10; i++){
+            this->create_newRow(page, i);
+            std::cout << i << ": " << this->notebook[page][i] << std::endl;
+        }
     }
+    //The page is not empty:
+    else{
+        std::cout << "\tPage number: "<< page << std::endl;
+        for(auto itr_r = this->notebook[page].begin(); itr_r != this->notebook[page].end(); itr_r++){
+            std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
+        }    
+    }
+}
 
 /*Helper Functions:*/
 
@@ -147,10 +184,10 @@ bool ariel::Notebook::space_Occupied(int page, int row, int column, Direction di
         }
     }
     
-    if(ans==false)
-        std::cout << "Space is Not occupied" << std::endl;
-    else
-        std::cout << "Space occupied" << std::endl;
+    // if(ans==false)
+    //     std::cout << "Space is Not occupied" << std::endl;
+    // else
+    //     std::cout << "Space occupied" << std::endl;
     return ans;
 }
 
@@ -171,31 +208,26 @@ void ariel::Notebook::create_newRow(int page, int row_num){
 int main(){
     using namespace ariel;
     Notebook n;
-    // for(int i=0; i<2; i++){
-    //     n.create_newPage(i);
-    //     for(int j=0; j<6; j++)
-    //         n.create_newRow(i,j);
-    // }
-    // n.notebook[0][0].replace(1, 5, "L__ad");
-    // n.notebook[0][3].replace(0, 1, "a");
-    // n.notebook[0][4].replace(0, 1, "d");
     std::string temp = "Leead";
-    // bool x = n.space_Occupied(0,0,1,Direction::Horizontal, temp);
-    // std::cout << x<< std::endl;    
-    // n.write(0,0,0,Direction::Horizontal, temp);
-    n.write(0,87,0,Direction::Vertical, temp);
-    n.write(0,0,87,Direction::Vertical, temp);
-    std::cout << temp<< std::endl;    
-    
-    std::cout << n.read(0,85,0,Direction::Vertical,10) << std::endl; 
+    std::cout <<"show: "<< std::endl;
+    n.show(0);
 
-    for(auto itr = n.notebook.begin(); itr != n.notebook.end(); itr++){
-        std::cout << "\tPage number: "<< itr->first <<std::endl;
-        for(auto itr_r = n.notebook[itr->first].begin(); itr_r != n.notebook[itr->first].end(); itr_r++){
-            std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
-        }
-    }    
+    n.write(1,4,0,Direction::Horizontal, temp);
+    n.write(1,0,87,Direction::Vertical, temp);
+    std::cout <<"Word: "<< temp<< std::endl;    
+    std::cout <<"Read: "<< n.read(0,0,87,Direction::Vertical,10) << std::endl; 
 
+    n.show(1);
+    std::cout<<"\nErasing:\n"<<std::endl;
+    n.erase(1,4,0,Direction::Horizontal,100);
+    n.write(1,42,0,Direction::Horizontal, temp);
+    // for(auto itr = n.notebook.begin(); itr != n.notebook.end(); itr++){
+    //     std::cout << "\tPage number: "<< itr->first <<std::endl;
+    //     for(auto itr_r = n.notebook[itr->first].begin(); itr_r != n.notebook[itr->first].end(); itr_r++){
+    //         std::cout << itr_r->first <<": "<<itr_r->second<<std::endl;
+    //     }
+    // }    
+    n.show(1);
     
     
     return 0;
