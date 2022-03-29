@@ -27,26 +27,23 @@ void  ariel::Notebook::write(int page, int row, int column, Direction dir, std::
     }
 
     //If the function reached this line, the space is NOT occupied.
+
     //Checking direction:
     int text_index=0;
-    if(dir == Direction::Horizontal){
-        //If the page doesn't exist:
-        if(this->notebook.count(page) == 0)
-            this->create_newPage(page);
-        //If the row doesn't exist:
-        if(this->notebook[page].count(row) == 0)
-            this->create_newRow(page, row);
+    //If the page doesn't exist:
+    if(this->notebook.count(page) == 0)
+        this->create_newPage(page);
+    //If the row doesn't exist:
+    if(this->notebook[page].count(row) == 0)
+        this->create_newRow(page, row);
 
+    if(dir == Direction::Horizontal){
         for(int i=column; i<column+text.length(); i++, text_index++){ 
              this->notebook[page][row][i] = text[text_index];
             }
         }
     //Direction is Vertical:
     else{
-        //If the page doesn't exist:
-        if(this->notebook.count(page) == 0)
-            this->create_newPage(page);
-
         for(int i=row; i<row+text.length(); i++, text_index++){
             //If the row doesn't exist:
             if(this->notebook[page].count(i) == 0)
