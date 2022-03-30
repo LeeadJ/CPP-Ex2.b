@@ -21,6 +21,8 @@ namespace ariel{
     bool space_Occupied(int page, int row, int column, Direction dir, std::string const &text);
     void create_newPage(int page);
     void create_newRow(int page, int row_num);
+    bool check_overWrite(int page, int row, int column, Direction dir, std::string const &text);
+    bool check_overErase(int page, int row, int column, Direction dir, int len);
     };
     
 }
